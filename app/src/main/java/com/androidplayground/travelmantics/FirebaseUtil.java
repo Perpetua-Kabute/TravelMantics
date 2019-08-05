@@ -1,5 +1,6 @@
 package com.androidplayground.travelmantics;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -9,12 +10,14 @@ public class FirebaseUtil {
     public static FirebaseDatabase mFirebaseDatabase;
     public static DatabaseReference mDatabaseReference;
     private static FirebaseUtil firebaseUtil;
+    public static FirebaseAuth mFireBaseAuth;
+    public  static FirebaseAuth.AuthStateListener mAuthListener;
     public static ArrayList<TravelDeal> mDeals;
 
     private FirebaseUtil(){}
 
     public static void openFbReference (String ref){
-        if(firebaseUtil == null){
+        if (firebaseUtil == null) {
             firebaseUtil = new FirebaseUtil();
             mFirebaseDatabase = FirebaseDatabase.getInstance();
             mDeals = new ArrayList<TravelDeal>();
