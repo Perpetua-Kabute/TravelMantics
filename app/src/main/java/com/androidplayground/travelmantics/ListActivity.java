@@ -16,44 +16,21 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-
 public class ListActivity extends AppCompatActivity {
-
+    ArrayList<TravelDeal> deals;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
-    private ChildEventListener mChildListener;
-    private RecyclerView mRVDeals;
+    private ChildEventListener mChildEventListener;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-
-/*
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseDatabase.getReference().child("traveldeals");
-*/
-
-        FirebaseUtil.openFbReference("traveldeals");
-        mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
-        mDatabaseReference = FirebaseUtil.mDatabaseReference;
-
-
-        mRVDeals = (RecyclerView) findViewById(R.id.rvDeals);
-        //ArrayList<TravelDeal> deals = new ArrayList<TravelDeal>();
-        final DealAdapter adapter = new DealAdapter();
-        mRVDeals.setAdapter(adapter);
-        LinearLayoutManager dealsLayoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRVDeals.setLayoutManager(dealsLayoutManager);
-
-
-
-
-        //ArrayList<TravelDeal> deals = FirebaseUtil.mDeals;
-
-
-
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.insert_menu:
+                Intent intent = new Intent(this, DealActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -64,17 +41,28 @@ public class ListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.insert_menu:
-                Intent intent = new Intent(this, DealActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
+        FirebaseUtil.openFbReference("traveldeals", this);
+        RecyclerView rvDeals = (RecyclerView) findViewById(R.id.rvDeals);
+        final DealAdapter adapter = new DealAdapter();
+        rvDeals.setAdapter(adapter);
+        LinearLayoutManager dealsLayoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,  false);
+        rvDeals.setLayoutManager(dealsLayoutManager);
+
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FirebaseUtil.detachListener();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        FirebaseUtil.attachListener();
+    }
 }
-
-
